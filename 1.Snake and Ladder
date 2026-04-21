@@ -1,0 +1,78 @@
+import random
+
+# Snakes and Ladders
+snakes = {
+    50: 9,
+    90: 10,
+    38: 16,
+    97: 22,
+    99: 49,
+    88: 38,
+    65: 29
+}
+
+ladders = {
+    31: 51,
+    25: 70,
+    19: 47,
+    21: 67,
+    41: 69,
+    52: 82,
+     7: 30
+}
+
+# Function to roll dice
+def roll_dice():
+    return random.randint(1, 6)
+
+# Function to move player
+def move_player(position, dice):
+    if position + dice > 100:
+        return position  # can't move beyond 100
+    position += dice
+
+    # Check for snake
+    if position in snakes:
+        print(f"Oops! Bitten by a snake 🐍 from {position} to {snakes[position]}")
+        position = snakes[position]
+
+    # Check for ladder
+    elif position in ladders:
+        print(f"Yay! Climbed a ladder 🪜 from {position} to {ladders[position]}")
+        position = ladders[position]
+
+    return position
+
+# Get player names
+player1 = input("Enter Player 1 name: ")
+player2 = input("Enter Player 2 name: ")
+
+positions = {
+    player1: 0,
+    player2: 0
+}
+
+players = [player1, player2]
+turn = 0
+
+print("\n🎲 Game Start! First to reach 100 wins 🎯\n")
+
+# Game loop
+while True:
+    current_player = players[turn % 2]
+    
+    input(f"{current_player}, press ENTER to roll the dice...")
+    
+    dice = roll_dice()
+    print(f"{current_player} rolled: {dice}")
+    
+    positions[current_player] = move_player(positions[current_player], dice)
+    
+    print(f"{current_player}'s position: {positions[current_player]}\n")
+    
+    # Check winner
+    if positions[current_player] == 100:
+        print(f"🏆 {current_player} wins the game! 🎉")
+        break
+    
+    turn += 1
