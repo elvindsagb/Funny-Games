@@ -1,5 +1,3 @@
-//code for snake and ladder
-
 import random
 
 # Snakes and Ladders
@@ -20,61 +18,110 @@ ladders = {
     21: 67,
     41: 69,
     52: 82,
-     7: 30
+    7: 30
 }
+
 
 # Function to roll dice
 def roll_dice():
     return random.randint(1, 6)
 
+
 # Function to move player
 def move_player(position, dice):
     if position + dice > 100:
-        return position  # can't move beyond 100
+        return position
+
     position += dice
 
-    # Check for snake
     if position in snakes:
-        print(f"Oops! Bitten by a snake 🐍 from {position} to {snakes[position]}")
+        print(f"🐍 Oops! Bitten by a snake from {position} to {snakes[position]}")
         position = snakes[position]
 
-    # Check for ladder
     elif position in ladders:
-        print(f"Yay! Climbed a ladder 🪜 from {position} to {ladders[position]}")
+        print(f"🪜 Yay! Climbed a ladder from {position} to {ladders[position]}")
         position = ladders[position]
 
     return position
 
-# Get player names
-player1 = input("Enter Player 1 name: ")
-player2 = input("Enter Player 2 name: ")
 
-positions = {
-    player1: 0,
-    player2: 0
-}
+# Number of players
+num_players = int(input("Enter number of players: "))
 
-players = [player1, player2]
+players = []
+positions = {}
+
+for i in range(num_players):
+    name = input(f"Enter Player {i+1} name: ")
+    players.append(name)
+    positions[name] = 0
+
+# Stores players in finishing order
+winners = []
+
+print("\n🎲 Snake and Ladder Game Started 🎯")
+print("First player to reach 100 gets 1st place.\n")
+
 turn = 0
 
-print("\n🎲 Game Start! First to reach 100 wins 🎯\n")
+while len(winners) < num_players:
 
-# Game loop
-while True:
-    current_player = players[turn % 2]
-    
+    current_player = players[turn % num_players]
+
+    # Skip finished players
+    if current_player in winners:
+        turn += 1
+        continue
+
     input(f"{current_player}, press ENTER to roll the dice...")
-    
+
     dice = roll_dice()
-    print(f"{current_player} rolled: {dice}")
-    
-    positions[current_player] = move_player(positions[current_player], dice)
-    
-    print(f"{current_player}'s position: {positions[current_player]}\n")
-    
-    # Check winner
+    print(f"🎲 {current_player} rolled {dice}")
+
+    positions[current_player] = move_player(
+        positions[current_player], dice
+    )
+
+    print(f"📍 {current_player}'s position: {positions[current_player]}")
+
+    # Check if player finished
     if positions[current_player] == 100:
-        print(f"🏆 {current_player} wins the game! 🎉")
-        break
-    
+        winners.append(current_player)
+
+        rank = len(winners)
+
+        if rank == 1:
+            suffix = "st"
+        elif rank == 2:
+            suffix = "nd"
+        elif rank == 3:
+            suffix = "rd"
+        else:
+            suffix = "th"
+
+        print(
+            f"\n🏆 {current_player} has finished in "
+            f"{rank}{suffix} place!\n"
+        )
+
+    print("-" * 40)
     turn += 1
+
+
+# Final Rankings
+print("\n🎉 GAME OVER 🎉")
+print("\n🏅 FINAL LEADERBOARD 🏅\n")
+
+for rank, player in enumerate(winners, start=1):
+    if rank == 1:
+        medal = "🥇"
+    elif rank == 2:
+        medal = "🥈"
+    elif rank == 3:
+        medal = "🥉"
+    else:
+        medal = "🎖️"
+
+    print(f"{medal} {rank}. {player}")
+
+print("\nThanks for playing!")
